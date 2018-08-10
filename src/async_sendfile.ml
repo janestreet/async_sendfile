@@ -65,7 +65,7 @@ module File = struct
 end
 
 module Limiter = struct
-  module Limiter = Limiter.Token_bucket
+  module Limiter = Limiter_async.Token_bucket
 
   type t = (bytes_sent:int -> unit Deferred.t)
 
