@@ -2,7 +2,7 @@ open! Core
 open Async
 open Expect_test_helpers
 
-let delivery_unit = Byte_units.create `Bytes 1.
+let delivery_unit = Byte_units.of_bytes_int 1
 let payload = "Testing"
 
 let server file =

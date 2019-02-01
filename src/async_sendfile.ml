@@ -2,7 +2,7 @@ open Core
 open Async_kernel
 open Async_unix
 
-let default_delivery_unit = Byte_units.create `Megabytes 2.
+let default_delivery_unit = Byte_units.of_megabytes 2.
 
 module File = struct
   type t =
@@ -38,7 +38,7 @@ module File = struct
   let sendfile = Or_error.ok_exn Linux_ext.sendfile
 
   let sendfile t ~socket_fd ~delivery_unit =
-    let delivery_unit = Byte_units.bytes delivery_unit |> Float.to_int in
+    let delivery_unit = Byte_units.bytes_int_exn delivery_unit in
     if Int.( = ) 0 t.bytes_pending
     then Ok `Fully_sent
     else (
@@ -69,7 +69,7 @@ module Limiter = struct
   type t = bytes_sent:int -> unit Deferred.t
 
   let create ~rate_per_sec =
-    let rate = Byte_units.bytes rate_per_sec in
+    let rate = Byte_units.bytes_float rate_per_sec in
     let limiter =
       Limiter.create_exn
         ~burst_size:(Float.to_int rate)
