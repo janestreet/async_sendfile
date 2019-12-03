@@ -15,7 +15,7 @@ depends: [
   "async_unix"
   "core"
   "ppx_jane"
-  "dune"         {>= "1.5.1"}
+  "dune"         {>= "2.0.0"}
 ]
 synopsis: "Thin wrapper around [Linux_ext.sendfile] to send full files"
 description: "
