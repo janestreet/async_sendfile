@@ -1,6 +1,6 @@
 open! Core
 open Async
-open Expect_test_helpers
+open Expect_test_helpers_async
 
 let delivery_unit = Byte_units.of_bytes_int 1
 let payload = "Testing"
