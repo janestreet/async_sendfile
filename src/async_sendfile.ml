@@ -79,12 +79,7 @@ module Limiter = struct
     in
     fun ~bytes_sent ->
       let sent = Ivar.create () in
-      Limiter.enqueue_exn
-        limiter
-        ~allow_immediate_run:true
-        bytes_sent
-        (Ivar.fill sent)
-        ();
+      Limiter.enqueue_exn limiter ~allow_immediate_run:true bytes_sent (Ivar.fill sent) ();
       Ivar.read sent
   ;;
 
@@ -128,8 +123,7 @@ let feed_file ~file ~socket_fd ~delivery_unit ~limiter =
         ready_to_write
         >>== (function
           | `Ready -> loop file
-          | `Closed | `Bad_fd ->
-            return (failed_to_send ~file ~error:error_socket_fd_closed))
+          | `Closed | `Bad_fd -> return (failed_to_send ~file ~error:error_socket_fd_closed))
     in
     loop file)
 ;;
