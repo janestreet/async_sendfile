@@ -37,7 +37,7 @@ module File = struct
 
   let sendfile = Or_error.ok_exn Linux_ext.sendfile
 
-  let sendfile t ~socket_fd ~delivery_unit =
+  let sendfile t ~fd ~delivery_unit =
     let delivery_unit = Byte_units.bytes_int_exn delivery_unit in
     if Int.( = ) 0 t.bytes_pending
     then Ok `Fully_sent
@@ -48,7 +48,7 @@ module File = struct
             ~pos:t.bytes_sent
             ~len:(Int.min t.bytes_pending delivery_unit)
             ~fd:t.raw_fd
-            socket_fd
+            fd
         in
         if bytes_sent_now < 0
         then
@@ -93,7 +93,7 @@ let optimization_to_achieve_the_limiter_limits deferred f =
 ;;
 
 let ( >>== ) = optimization_to_achieve_the_limiter_limits
-let error_socket_fd_closed = Error.of_string "Socket fd is closed."
+let error_fd_closed = Error.of_string "Destination fd is closed."
 
 let failed_to_send ~file ~error =
   Error
@@ -106,24 +106,24 @@ let failed_to_send ~file ~error =
            (error : Error.t)])
 ;;
 
-let feed_file ~file ~socket_fd ~delivery_unit ~limiter =
-  if Fd.is_closed socket_fd
-  then return (failed_to_send ~file ~error:error_socket_fd_closed)
+let feed_file ~file ~fd ~delivery_unit ~limiter =
+  if Fd.is_closed fd
+  then return (failed_to_send ~file ~error:error_fd_closed)
   else (
-    let raw_client_fd = Fd.file_descr_exn socket_fd in
+    let raw_client_fd = Fd.file_descr_exn fd in
     let rec loop file =
-      match File.sendfile ~socket_fd:raw_client_fd file ~delivery_unit with
+      match File.sendfile ~fd:raw_client_fd file ~delivery_unit with
       | Error error -> return (failed_to_send ~file ~error)
       | Ok `Fully_sent -> Deferred.Or_error.ok_unit
       | Ok (`Sent (bytes_sent, file)) ->
         let ready_to_send = limiter ~bytes_sent in
-        let ready_to_write = Fd.ready_to socket_fd `Write in
+        let ready_to_write = Fd.ready_to fd `Write in
         ready_to_send
         >>== fun () ->
         ready_to_write
         >>== (function
           | `Ready -> loop file
-          | `Closed | `Bad_fd -> return (failed_to_send ~file ~error:error_socket_fd_closed))
+          | `Closed | `Bad_fd -> return (failed_to_send ~file ~error:error_fd_closed))
     in
     loop file)
 ;;
@@ -131,9 +131,9 @@ let feed_file ~file ~socket_fd ~delivery_unit ~limiter =
 let sendfile
       ?(limiter = Limiter.no_pushback)
       ?(delivery_unit = default_delivery_unit)
-      ~socket_fd
+      ~fd
       ~file
       ()
   =
-  File.with_file file ~f:(fun file -> feed_file ~file ~socket_fd ~delivery_unit ~limiter)
+  File.with_file file ~f:(fun file -> feed_file ~file ~fd ~delivery_unit ~limiter)
 ;;
