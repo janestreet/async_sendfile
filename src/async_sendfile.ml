@@ -8,7 +8,7 @@ module File = struct
   type t =
     { path : string
     ; fd : Fd.t
-    ; raw_fd : Core.Unix.File_descr.t
+    ; raw_fd : Core_unix.File_descr.t
     ; bytes_sent : int
     ; bytes_pending : int
     }
