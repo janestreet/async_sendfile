@@ -79,7 +79,12 @@ module Limiter = struct
     in
     fun ~bytes_sent ->
       let sent = Ivar.create () in
-      Limiter.enqueue_exn limiter ~allow_immediate_run:true bytes_sent (Ivar.fill sent) ();
+      Limiter.enqueue_exn
+        limiter
+        ~allow_immediate_run:true
+        bytes_sent
+        (Ivar.fill_exn sent)
+        ();
       Ivar.read sent
   ;;
 
