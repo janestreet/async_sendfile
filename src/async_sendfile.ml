@@ -12,7 +12,7 @@ module File = struct
     ; bytes_sent : int
     ; bytes_pending : int
     }
-  [@@deriving fields]
+  [@@deriving fields ~getters]
 
   let with_file file ~f =
     let%bind stat = Unix.stat file in
