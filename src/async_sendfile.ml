@@ -127,18 +127,18 @@ let feed_file ~file ~fd ~delivery_unit ~limiter =
         >>== fun () ->
         ready_to_write
         >>== (function
-          | `Ready -> loop file
-          | `Closed | `Bad_fd -> return (failed_to_send ~file ~error:error_fd_closed))
+        | `Ready -> loop file
+        | `Closed | `Bad_fd -> return (failed_to_send ~file ~error:error_fd_closed))
     in
     loop file)
 ;;
 
 let sendfile
-      ?(limiter = Limiter.no_pushback)
-      ?(delivery_unit = default_delivery_unit)
-      ~fd
-      ~file
-      ()
+  ?(limiter = Limiter.no_pushback)
+  ?(delivery_unit = default_delivery_unit)
+  ~fd
+  ~file
+  ()
   =
   File.with_file file ~f:(fun file -> feed_file ~file ~fd ~delivery_unit ~limiter)
 ;;

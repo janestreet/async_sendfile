@@ -10,7 +10,7 @@ let server file =
     ~on_handler_error:`Raise
     Tcp.Where_to_listen.of_port_chosen_by_os
     (fun _ _ w ->
-       Async_sendfile.sendfile ~delivery_unit ~fd:(Writer.fd w) ~file () >>| ok_exn)
+    Async_sendfile.sendfile ~delivery_unit ~fd:(Writer.fd w) ~file () >>| ok_exn)
 ;;
 
 let client where_to_connect =
