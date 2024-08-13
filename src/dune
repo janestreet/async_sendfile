@@ -1,6 +1,7 @@
 (library
  (name async_sendfile)
  (public_name async_sendfile)
- (libraries async_unix core async_kernel.limiter_async)
+ (libraries async_unix core async_kernel async_kernel.limiter_async core_unix
+   core_unix.linux_ext)
  (preprocess
   (pps ppx_jane)))

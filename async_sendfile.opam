@@ -14,6 +14,7 @@ depends: [
   "async_kernel"
   "async_unix"
   "core"
+  "core_unix"
   "ppx_jane"
   "dune"         {>= "3.11.0"}
 ]
