@@ -7,8 +7,8 @@ module Limiter : sig
   val create : rate_per_sec:Byte_units.t -> t
 end
 
-(** Use sendfile(2) to deliver all bytes from [file] to [fd].
-    Return success iff the whole file was successfully delivered. *)
+(** Use sendfile(2) to deliver all bytes from [file] to [fd]. Return success iff the whole
+    file was successfully delivered. *)
 val sendfile
   :  ?limiter:Limiter.t (** default: No limiter *)
   -> ?delivery_unit:Byte_units.t (** default: 2 Megabytes *)
