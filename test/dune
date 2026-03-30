@@ -1,6 +1,5 @@
 (library
  (name async_sendfile_test)
- (libraries async async_sendfile core expect_test_helpers_async
-   expect_test_helpers_core)
+ (libraries async async_sendfile core expect_test_helpers_async)
  (preprocess
   (pps ppx_jane)))

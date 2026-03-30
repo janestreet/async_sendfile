@@ -17,7 +17,8 @@ let client where_to_connect =
   let buffer = Buffer.create (String.length payload) in
   let%bind () =
     Tcp.with_connection where_to_connect (fun _ r _ ->
-      Reader.lines r |> Pipe.iter_without_pushback ~f:(Buffer.add_string buffer))
+      Reader.lines r
+      |> Pipe.iter_without_pushback ~f:(fun s -> Buffer.add_string buffer s))
   in
   return (Buffer.contents buffer)
 ;;
