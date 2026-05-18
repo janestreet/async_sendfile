@@ -19,7 +19,7 @@ depends: [
   "ppx_jane"
   "dune"         {>= "3.17.0"}
 ]
-available: arch != "arm32" & arch != "x86_32"
+available: arch != "x86_32"
 synopsis: "Thin wrapper around [Linux_ext.sendfile] to send full files"
 description: "
 "
